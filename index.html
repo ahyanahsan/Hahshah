@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Garments Trims Hero</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+}
+
+body {
+  background: #070b0e;
+  color: #ffffff;
+  overflow: hidden;
+}
+
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  padding: 6vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  max-width: 520px;
+}
+
+.content h1 {
+  font-size: clamp(30px, 4vw, 48px);
+  line-height: 1.1;
+  margin-bottom: 18px;
+}
+
+.content p {
+  color: #c9d2d4;
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 26px;
+}
+
+.buttons {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 14px 26px;
+  border-radius: 40px;
+  font-size: 14px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+
+.btn.primary {
+  background: linear-gradient(135deg, #21e6c1, #1fb6ff);
+  color: #041114;
+  border: none;
+}
+
+.btn.primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(33,230,193,0.35);
+}
+
+.btn.secondary {
+  color: #ffffff;
+}
+
+.btn.secondary:hover {
+  background: rgba(255,255,255,0.06);
+}
+
+.visual {
+  position: relative;
+  z-index: 2;
+  width: 36%;
+  height: 62%;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.45);
+  text-align: center;
+  padding: 20px;
+}
+
+@media(max-width: 900px) {
+  .hero {
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+  }
+  .visual {
+    width: 90%;
+    height: 220px;
+    margin-top: 30px;
+  }
+  .buttons {
+    justify-content: center;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<section class="hero">
+  <canvas id="threads"></canvas>
+
+  <div class="content">
+    <h1>Export-Oriented<br>Garments Trims & Accessories</h1>
+    <p>
+      We manufacture and supply trims and accessories for factories and buying houses.
+      Built on consistency, process discipline, and production reliability.
+    </p>
+
+    <div class="buttons">
+      <a href="#" class="btn primary">View Product Catalog</a>
+      <a href="#" class="btn secondary">Contact Sales</a>
+    </div>
+  </div>
+
+  <div class="visual">
+    Product / trims visuals<br>
+    can be placed here
+  </div>
+</section>
+
+<script>
+const canvas = document.getElementById("threads");
+const ctx = canvas.getContext("2d");
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener("resize", resize);
+
+const threadLines = [];
+const particles = [];
+
+for (let i = 0; i < 8; i++) {
+  threadLines.push({
+    offset: Math.random() * 1000,
+    speed: 0.0005 + Math.random() * 0.0006,
+    amplitude: 40 + Math.random() * 60,
+    y: canvas.height * (0.2 + i * 0.08)
+  });
+}
+
+for (let i = 0; i < 120; i++) {
+  particles.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    r: Math.random() * 1.5 + 0.5,
+    s: Math.random() * 0.3 + 0.1,
+    o: Math.random() * 0.3
+  });
+}
+
+let t = 0;
+
+function drawThreads() {
+  threadLines.forEach((line, i) => {
+    ctx.beginPath();
+    ctx.strokeStyle = `rgba(60,220,200,0.12)`;
+    ctx.lineWidth = 1.2;
+    for (let x = 0; x < canvas.width; x += 10) {
+      const y =
+        line.y +
+        Math.sin(x * 0.004 + t * line.speed + line.offset) *
+          line.amplitude;
+      if (x === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  });
+}
+
+function drawParticles() {
+  particles.forEach(p => {
+    ctx.beginPath();
+    ctx.fillStyle = `rgba(200,240,240,${p.o})`;
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fill();
+    p.y -= p.s;
+    if (p.y < 0) {
+      p.y = canvas.height;
+      p.x = Math.random() * canvas.width;
+    }
+  });
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawThreads();
+  drawParticles();
+  t += 1;
+  requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+
+</body>
+</html>
